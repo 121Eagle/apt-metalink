@@ -29,7 +29,7 @@ import apt_pkg
 
 class AptMetalink:
 
-    def __init__(self, opts):
+    def __init__(self, opts: optparse.Values) -> None:
         self.cache = apt.Cache(apt.progress.text.OpProgress())
         self.opts = opts
         self.archive_dir = apt_pkg.config.find_dir('Dir::Cache::Archives')
@@ -53,7 +53,7 @@ class AptMetalink:
                 raise Exception('{0} is not found'.format(pkg_name))
         self._get_changes()
 
-    def _get_changes(self):
+    def _get_changes(self) -> None:
         pkgs = sorted(self.cache.get_changes(), key=lambda p:p.name)
         if pkgs:
             _print_update_summary(self.cache, pkgs)
