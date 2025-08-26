@@ -229,7 +229,7 @@ def pprint_names(msg, names):
         )
 
 
-def unit_str(val):
+def unit_str(val: int) -> str:
     if val > 1000 * 1000:
         return "{0:.1f}MB".format(val / 1000 / 1000)
     elif val > 1000:
