@@ -124,8 +124,8 @@ class AptMetalink:
         proc = subprocess.Popen(
             cmdline, stdin=subprocess.PIPE, stdout=1, stderr=2, encoding="utf-8"
         )
-        make_metalink(proc.stdin, pkgs)
-        proc.stdin.close()
+        make_metalink(typing.cast(typing.TextIO, proc.stdin), pkgs)
+        typing.cast(typing.TextIO, proc.stdin).close()
         proc.wait()
         link_success = True
         # Link archives/partial/*.deb to archives/
@@ -190,7 +190,7 @@ def get_filename(version):
     return f"{version.package.shortname}_{quoted_version}_{version.architecture}.deb"
 
 
-def make_metalink(out: TextIOWrapper, pkgs: typing.Any) -> None:
+def make_metalink(out: typing.TextIO, pkgs: typing.Any) -> None:
     out.write('<?xml version="1.0" encoding="UTF-8"?>')
     out.write('<metalink xmlns="urn:ietf:params:xml:ns:metalink">')
     for pkg in pkgs:
