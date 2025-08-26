@@ -62,7 +62,7 @@ class AptMetalink:
         self._get_changes()
 
     def _get_changes(self) -> None:
-        pkgs = sorted(self.cache.get_changes(), key=lambda p: p.name)
+        pkgs: list[apt.Package] = sorted(self.cache.get_changes(), key=lambda p: p.name)
         if pkgs:
             _print_update_summary(self.cache, pkgs)
             sys.stdout.write("Do you want to continue [Y/n]?")
