@@ -30,6 +30,7 @@ import apt_pkg
 
 if(typing.TYPE_CHECKING):
     from io import TextIOWrapper
+    from collections.abc import Iterable
 
 class AptMetalink:
 
@@ -183,14 +184,14 @@ def get_hash(version):
         return (None, None)
 
 
-def get_filename(version):
+def get_filename(version: typing.Any) -> str:
     # TODO apt-get man page said filename and basename in URI
     # could be different.
     quoted_version = version.version.replace(":", "%3a")
     return f"{version.package.shortname}_{quoted_version}_{version.architecture}.deb"
 
 
-def make_metalink(out: typing.TextIO, pkgs: typing.Any) -> None:
+def make_metalink(out: typing.TextIO, pkgs: Iterable[apt.Package]) -> None:
     out.write('<?xml version="1.0" encoding="UTF-8"?>')
     out.write('<metalink xmlns="urn:ietf:params:xml:ns:metalink">')
     for pkg in pkgs:
