@@ -28,9 +28,10 @@ import typing
 import apt
 import apt_pkg
 
-if(typing.TYPE_CHECKING):
+if typing.TYPE_CHECKING:
     from io import TextIOWrapper
     from collections.abc import Iterable
+
 
 class AptMetalink:
 
@@ -63,7 +64,9 @@ class AptMetalink:
         self._get_changes()
 
     def _get_changes(self) -> None:
-        pkgs: list[apt.Package] = sorted(self.cache.get_changes(), key=lambda p: p.name)
+        pkgs: list[apt.Package] = sorted(
+            self.cache.get_changes(), key=lambda p: p.name
+        )
         if pkgs:
             _print_update_summary(self.cache, pkgs)
             sys.stdout.write("Do you want to continue [Y/n]?")
@@ -191,7 +194,7 @@ def get_filename(version: typing.Any) -> str:
     return f"{version.package.shortname}_{quoted_version}_{version.architecture}.deb"
 
 
-def make_metalink(out: typing.TextIO, pkgs: Iterable[apt.Package]) -> None:
+def make_metalink(out: typing.TextIO, pkgs: Iterable[typing.Any]) -> None:
     out.write('<?xml version="1.0" encoding="UTF-8"?>')
     out.write('<metalink xmlns="urn:ietf:params:xml:ns:metalink">')
     for pkg in pkgs:
