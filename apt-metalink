@@ -25,13 +25,13 @@ import errno
 import hashlib
 import typing
 
+from collections.abc import Iterable
+
 import apt
 import apt_pkg
 
 if typing.TYPE_CHECKING:
     from io import TextIOWrapper
-    from collections.abc import Iterable
-
 
 class AptMetalink:
 
@@ -51,10 +51,10 @@ class AptMetalink:
         self.cache.upgrade(dist_upgrade=dist_upgrade)
         self._get_changes()
 
-    def install(self, pkg_names):
+    def install(self, pkg_names: Iterable[str]) -> None:
         for pkg_name in pkg_names:
             if pkg_name in self.cache:
-                pkg = self.cache[pkg_name]
+                pkg = typing.assert_type(self.cache[pkg_name], apt.Package)
                 if not pkg.installed:
                     pkg.mark_install()
                 elif pkg.is_upgradable:
