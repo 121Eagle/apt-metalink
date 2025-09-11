@@ -33,6 +33,7 @@ import apt_pkg
 if typing.TYPE_CHECKING:
     from io import TextIOWrapper
 
+
 class AptMetalink:
 
     def __init__(self, opts: optparse.Values) -> None:
@@ -153,8 +154,8 @@ class AptMetalink:
                 link_success = False
         return proc.returncode == 0 and link_success
 
-    def _file_downloaded(self, pkg, hash_check=False):
-        candidate = pkg.candidate
+    def _file_downloaded(self, pkg: apt.Package, hash_check: bool = False) -> bool:
+        candidate = typing.assert_type(pkg.candidate, apt.Version)
         path = os.path.join(self.archive_dir, get_filename(candidate))
         if not os.path.exists(path) or os.stat(path).st_size != candidate.size:
             return False
