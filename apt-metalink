@@ -23,6 +23,7 @@ import sys
 import optparse
 import errno
 import hashlib
+import xml.etree.ElementTree as ET
 
 import apt
 import apt_pkg
@@ -174,8 +175,14 @@ def get_filename(version):
     quoted_version = version.version.replace(':', '%3a')
     return f'{version.package.shortname}_{quoted_version}_{version.architecture}.deb'
 
+METALINK_ENCODING = "UTF-8"
+METALINK_NAMESPACE = "urn:ietf:params:xml:ns:metalink"
 def make_metalink(out, pkgs):
-    out.write('<?xml version="1.0" encoding="UTF-8"?>')
+    # attempting to make a metalink tree instead of making multiple writes to the Metalink file
+    MetaLinkTree = ET.ElementTree(
+            None, # TODO planning on adding a root element, when I get better with Element Trees
+            None
+    )
     out.write('<metalink xmlns="urn:ietf:params:xml:ns:metalink">')
     for pkg in pkgs:
         version = pkg.candidate
