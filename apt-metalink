@@ -24,6 +24,8 @@ import optparse
 import errno
 import hashlib
 
+import collections.abc
+
 import apt
 import apt_pkg
 
@@ -41,7 +43,7 @@ class AptMetalink:
         self.cache.upgrade(dist_upgrade=dist_upgrade)
         self._get_changes()
 
-    def install(self, pkg_names):
+    def install(self, pkg_names: collections.abc.Iterable[str]) -> None:
         for pkg_name in pkg_names:
             if pkg_name in self.cache:
                 pkg = self.cache[pkg_name]
@@ -196,7 +198,7 @@ def guess_concurrent(pkgs):
         max_uris = max(len(version.uris), max_uris)
     return max_uris
 
-def pprint_names(msg, names):
+def pprint_names(msg, names: collections.abc.Iterable[str]):
     if names:
         print(msg)
         print(textwrap.fill(' '.join(names),
