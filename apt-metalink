@@ -208,7 +208,7 @@ def pprint_names(msg, names: collections.abc.Iterable[str]):
                             break_long_words=False,
                             break_on_hyphens=False))
 
-def unit_str(val):
+def unit_str(val: int | float) -> str:
     if val > 1000*1000:
         return '{0:.1f}MB'.format(val/1000/1000)
     elif val > 1000:
