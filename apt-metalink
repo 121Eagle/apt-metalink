@@ -155,12 +155,13 @@ class AptMetalink:
         else:
             return True
 
-def check_hash(path, hash_type, hash_value):
+def check_hash(path, hash_type, hash_value) -> bool:
     with open(path, 'rb') as f:
         digest = hashlib.file_digest(f, hash_type)
     return digest.hexdigest() == hash_value
 
-def get_hash(version):
+def get_hash(version) -> tuple[str | None, None | object]:
+    # TODO: Find a better type for hashing
     if version.sha256:
         return ("sha256", version.sha256)
     elif version.sha1:
