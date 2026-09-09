@@ -31,7 +31,7 @@ import apt_pkg
 
 class AptMetalink:
 
-    def __init__(self, opts):
+    def __init__(self, opts: optparse.Values):
         self.cache = apt.Cache(apt.progress.text.OpProgress())
         self.opts = opts
         self.archive_dir = apt_pkg.config.find_dir('Dir::Cache::Archives')
@@ -39,7 +39,7 @@ class AptMetalink:
             raise Exception(('No archive dir is set.'
                              ' Usually it is /var/cache/apt/archives/'))
 
-    def upgrade(self, dist_upgrade=False):
+    def upgrade(self, dist_upgrade: bool = False) -> None:
         self.cache.upgrade(dist_upgrade=dist_upgrade)
         self._get_changes()
 
@@ -55,7 +55,7 @@ class AptMetalink:
                 raise Exception('{0} is not found'.format(pkg_name))
         self._get_changes()
 
-    def _get_changes(self):
+    def _get_changes(self) -> None:
         pkgs = sorted(self.cache.get_changes(), key=lambda p:p.name)
         if pkgs:
             _print_update_summary(self.cache, pkgs)
@@ -198,7 +198,7 @@ def guess_concurrent(pkgs):
         max_uris = max(len(version.uris), max_uris)
     return max_uris
 
-def pprint_names(msg, names: collections.abc.Iterable[str]):
+def pprint_names(msg: str, names: collections.abc.Iterable[str]):
     if names:
         print(msg)
         print(textwrap.fill(' '.join(names),
