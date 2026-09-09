@@ -79,7 +79,7 @@ class AptMetalink:
         else:
             self.cache.commit(apt.progress.text.AcquireProgress())
 
-    def _download(self, pkgs, num_concurrent=1):
+    def _download(self, pkgs: collections.abc.Iterable[apt.Package], num_concurrent=1) -> bool:
         if not pkgs:
             return True
         partial_dir = os.path.join(self.archive_dir, 'partial')
@@ -139,7 +139,7 @@ class AptMetalink:
                 link_success = False
         return proc.returncode == 0 and link_success
 
-    def _file_downloaded(self, pkg, hash_check=False):
+    def _file_downloaded(self, pkg: apt.Package, hash_check: bool = False) -> bool:
         candidate = pkg.candidate
         path = os.path.join(self.archive_dir, get_filename(candidate))
         if not os.path.exists(path) or os.stat(path).st_size != candidate.size:
@@ -170,13 +170,13 @@ def get_hash(version):
     else:
         return (None, None)
 
-def get_filename(version):
+def get_filename(version) -> str:
     # TODO apt-get man page said filename and basename in URI
     # could be different.
     quoted_version = version.version.replace(':', '%3a')
     return f'{version.package.shortname}_{quoted_version}_{version.architecture}.deb'
 
-def make_metalink(out, pkgs):
+def make_metalink(out, pkgs: collections.abc.Iterable[apt.Package]):
     out.write('<?xml version="1.0" encoding="UTF-8"?>')
     out.write('<metalink xmlns="urn:ietf:params:xml:ns:metalink">')
     for pkg in pkgs:
@@ -191,14 +191,14 @@ def make_metalink(out, pkgs):
         out.write('</file>')
     out.write('</metalink>')
 
-def guess_concurrent(pkgs):
+def guess_concurrent(pkgs: collections.abc.Iterable[apt.Package]) -> int:
     max_uris = 0
     for pkg in pkgs:
         version = pkg.candidate
         max_uris = max(len(version.uris), max_uris)
     return max_uris
 
-def pprint_names(msg: str, names: collections.abc.Iterable[str]):
+def pprint_names(msg: str, names: collections.abc.Iterable[str]) -> None:
     if names:
         print(msg)
         print(textwrap.fill(' '.join(names),
@@ -216,7 +216,7 @@ def unit_str(val: int | float) -> str:
     else:
         return '{0:.0f}B'.format(val)
 
-def _print_update_summary(cache, pkgs):
+def _print_update_summary(cache: apt.Cache, pkgs: collections.abc.Iterable[apt.Package]) -> None:
     delete_names = []
     install_names = []
     upgrade_names = []
@@ -244,7 +244,7 @@ def _print_update_summary(cache, pkgs):
         print(('After this operation, {0} of additional disk space will'
                ' be used.').format(unit_str(cache.required_space)))
 
-def main():
+def main() -> None:
     usage = 'Usage: %prog [options] {upgrade | dist-upgrade | install pkg ...}'
     parser = optparse.OptionParser(usage=usage)
     parser.add_option('-d', '--download-only', action='store_true',
