@@ -23,6 +23,7 @@ import sys
 import optparse
 import errno
 import hashlib
+import typing
 
 import collections.abc
 
@@ -175,7 +176,7 @@ def check_hash(path, hash_type, hash_value) -> bool:
     return digest.hexdigest() == hash_value
 
 
-def get_hash(version) -> tuple[str | None, None | object]:
+def get_hash(version) -> tuple[typing.LiteralString | None, None | object]:
     # TODO: Find a better type for hashing
     if version.sha256:
         return ("sha256", version.sha256)
@@ -187,14 +188,14 @@ def get_hash(version) -> tuple[str | None, None | object]:
         return (None, None)
 
 
-def get_filename(version) -> str:
+def get_filename(version: apt.Version) -> str:
     # TODO apt-get man page said filename and basename in URI
     # could be different.
     quoted_version = version.version.replace(":", "%3a")
     return f"{version.package.shortname}_{quoted_version}_{version.architecture}.deb"
 
 
-def make_metalink(out, pkgs: Iterable[apt.Package]):
+def make_metalink(out: typing.TextIO, pkgs: Iterable[apt.Package]) -> None:
     out.write('<?xml version="1.0" encoding="UTF-8"?>')
     out.write('<metalink xmlns="urn:ietf:params:xml:ns:metalink">')
     for pkg in pkgs:
