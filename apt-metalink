@@ -212,10 +212,16 @@ def make_metalink(out: typing.TextIO, pkgs: Iterable[apt.Package]) -> None:
 
 
 def guess_concurrent(pkgs: Iterable[apt.Package]) -> int:
+    """
+    This function appears to take an Iterable of Packages
+    And attempts to see how many conncurrent connections it can make
+    using aria2c
+    """
     max_uris = 0
     for pkg in pkgs:
         version = pkg.candidate
-        max_uris = max(len(version.uris), max_uris)
+        if version is not None:
+            max_uris = max(len(version.uris), max_uris)
     return max_uris
 
 
