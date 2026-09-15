@@ -92,7 +92,9 @@ class AptMetalink:
         else:
             self.cache.commit(apt.progress.text.AcquireProgress())
 
-    def _download(self, pkgs: Iterable[apt.Package], num_concurrent=1) -> bool:
+    def _download(
+        self, pkgs: Iterable[apt.Package], num_concurrent: int = 1
+    ) -> bool:
         if not pkgs:
             return True
         partial_dir = os.path.join(self.archive_dir, "partial")
@@ -170,14 +172,15 @@ class AptMetalink:
             return True
 
 
-def check_hash(path, hash_type, hash_value) -> bool:
+def check_hash(path, hash_type: str, hash_value: str) -> bool:
     with open(path, "rb") as f:
         digest = hashlib.file_digest(f, hash_type)
     return digest.hexdigest() == hash_value
 
 
-def get_hash(version) -> tuple[typing.LiteralString | None, None | object]:
-    # TODO: Find a better type for hashing
+def get_hash(
+    version: apt.Version,
+) -> tuple[typing.LiteralString | None, str | None]:
     if version.sha256:
         return ("sha256", version.sha256)
     elif version.sha1:
