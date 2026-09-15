@@ -93,7 +93,7 @@ class AptMetalink:
             self.cache.commit(apt.progress.text.AcquireProgress())
 
     def _download(
-        self, pkgs: Iterable[apt.Package], num_concurrent: int = 1
+        self, pkgs: Iterable[apt.Package] | None, num_concurrent: int = 1
     ) -> bool:
         if not pkgs:
             return True
@@ -220,12 +220,18 @@ def guess_concurrent(pkgs: Iterable[apt.Package]) -> int:
     And attempts to see how many conncurrent connections it can make
     using aria2c
     """
-    max_uris = 0
-    for pkg in pkgs:
-        version = pkg.candidate
-        if version is not None:
-            max_uris = max(len(version.uris), max_uris)
-    return max_uris
+    #    max_uris = 0
+    #    for pkg in pkgs:
+    #        version = pkg.candidate
+    #        if version is not None:
+    #            max_uris = max(len(version.uris), max_uris)
+    #    return max_uris
+    potential_candidates = (pkg.candidate for pkg in pkgs)
+    return max(
+        len(version.uris)
+        for version in potential_candidates
+        if version is not None
+    )
 
 
 def pprint_names(msg: str, names: Iterable[str]) -> None:
