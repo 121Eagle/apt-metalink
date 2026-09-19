@@ -60,7 +60,7 @@ class AptMetalink:
                 elif pkg.is_upgradable:
                     pkg.mark_upgrade()
             else:
-                raise Exception("{0} is not found".format(pkg_name))
+                raise KeyError(f"{pkg_name} is not found")
         self._get_changes()
 
     def _get_changes(self) -> None:
@@ -183,12 +183,11 @@ def get_hash(
 ) -> tuple[typing.LiteralString | None, str | None]:
     if version.sha256:
         return ("sha256", version.sha256)
-    elif version.sha1:
+    if version.sha1:
         return ("sha1", version.sha1)
-    elif version.md5:
+    if version.md5:
         return ("md5", version.md5)
-    else:
-        return (None, None)
+    return (None, None)
 
 
 def get_filename(version: apt.Version) -> str:
@@ -203,13 +202,15 @@ def make_metalink(out: typing.TextIO, pkgs: Iterable[apt.Package]) -> None:
     out.write('<metalink xmlns="urn:ietf:params:xml:ns:metalink">')
     for pkg in pkgs:
         version = pkg.candidate
+        if version is None:
+            continue
         hashtype, hashvalue = get_hash(version)
         out.write('<file name="{0}">'.format(get_filename(version)))
         out.write("<size>{0}</size>".format(version.size))
         if hashtype:
-            out.write('<hash type="{0}">{1}</hash>'.format(hashtype, hashvalue))
+            out.write(f'<hash type="{hashtype}">{hashvalue}</hash>')
         for uri in version.uris:
-            out.write('<url priority="1">{0}</url>'.format(uri))
+            out.write(f'<url priority="1">{uri}</url>')
         out.write("</file>")
     out.write("</metalink>")
 
